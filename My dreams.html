@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя Мечта — Доска Желаний</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #6c5ce7;
+            --primary-hover: #5b4bc4;
+            --text-color: #2d3436;
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Форма добавления */
+        .add-dream-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .add-dream-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group input[type="text"] {
+            flex: 2;
+            min-width: 200px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        /* Кнопка с плюсиком для файла */
+        .file-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eef0f8;
+            color: var(--primary-color);
+            border: 2px dashed var(--primary-color);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .file-upload-btn:hover {
+            background-color: #e0e4f7;
+        }
+
+        .file-upload-btn input[type="file"] {
+            display: none;
+        }
+
+        .submit-btn {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Сетка карточек */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Чек-лист задач */
+        .task-list {
+            list-style: none;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .task-item.completed {
+            text-decoration: line-through;
+            color: #b2bec3;
+        }
+
+        .task-input-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .task-input-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .task-input-group button {
+            padding: 8px 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #ff7675;
+            cursor: pointer;
+            align-self: flex-end;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Моя Доска Желаний 🚀</h1>
+            <p>Превращай мечты в чёткие цели и действия</p>
+        </header>
+
+        <!-- Форма добавления мечты -->
+        <div class="add-dream-card">
+            <h2>Добавить новую мечту</h2>
+            <form id="dreamForm" class="form-group">
+                <input type="text" id="dreamTitle" placeholder="Название мечты (например, Поездка в Токио)" required>
+
+                <!-- Загрузка изображения из проводника -->
+                <label class="file-upload-btn">
+                    ➕ <span id="fileLabel" style="margin-left: 5px;">Выбрать фото</span>
+                    <input type="file" id="dreamImageFile" accept="image/*" required>
+                </label>
+
+                <button type="submit" class="submit-btn">Добавить мечту</button>
+            </form>
+        </div>
+
+        <!-- Сетка карточек -->
+        <div class="grid" id="dreamGrid"></div>
+    </div>
+
+    <script>
+        let dreams = [];
+
+        const dreamGrid = document.getElementById('dreamGrid');
+        const dreamForm = document.getElementById('dreamForm');
+        const fileInput = document.getElementById('dreamImageFile');
+        const fileLabel = document.getElementById('fileLabel');
+
+        // Отображение имени выбранного файла
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileLabel.textContent = e.target.files[0].name;
+            } else {
+                fileLabel.textContent = 'Выбрать фото';
+            }
+        });
+
+        // Отрисовка карточек
+        function renderDreams() {
+            dreamGrid.innerHTML = '';
+            dreams.forEach(dream => {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                const tasksHTML = dream.tasks.map((task, index) => `
+                    <li class="task-item ${task.completed ? 'completed' : ''}">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${dream.id}, ${index})">
+                        <span>${task.text}</span>
+                    </li>
+                `).join('');
+
+                card.innerHTML = `
+                    <img src="${dream.image}" alt="${dream.title}">
+                    <div class="card-content">
+                        <h3 class="card-title">${dream.title}</h3>
+                        <ul class="task-list">
+                            ${tasksHTML}
+                        </ul>
+                        <div class="task-input-group">
+                            <input type="text" placeholder="Новый шаг..." id="input-${dream.id}">
+                            <button onclick="addTask(${dream.id})">+</button>
+                        </div>
+                        <button class="delete-btn" onclick="deleteDream(${dream.id})">Удалить мечту</button>
+                    </div>
+                `;
+                dreamGrid.appendChild(card);
+            });
+        }
+
+        // Добавление мечты с локальной картинкой
+        dreamForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('dreamTitle').value;
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            // Чтение локального файла и преобразование в URL для браузера
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const newDream = {
+                    id: Date.now(),
+                    title: title,
+                    image: event.target.result,
+                    tasks: []
+                };
+
+                dreams.push(newDream);
+                renderDreams();
+                dreamForm.reset();
+                fileLabel.textContent = 'Выбрать фото';
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        function addTask(dreamId) {
+            const input = document.getElementById(`input-${dreamId}`);
+            const taskText = input.value.trim();
+            if (!taskText) return;
+
+            const dream = dreams.find(d => d.id === dreamId);
+            dream.tasks.push({ text: taskText, completed: false });
+            renderDreams();
+        }
+
+        function toggleTask(dreamId, taskIndex) {
+            const dream = dreams.find(d => d.id === dreamId);
+            dream.tasks[taskIndex].completed = !dream.tasks[taskIndex].completed;
+            renderDreams();
+        }
+
+        function deleteDream(dreamId) {
+            dreams = dreams.filter(d => d.id !== dreamId);
+            renderDreams();
+        }
+
+        renderDreams();
+    </script>
+</body>
+</html>
